@@ -3,11 +3,13 @@ import { config } from "https://deno.land/x/dotenv/mod.ts";
 const accessToken = config().ACCESS_TOKEN;
 
 export const fetchInput = async (day: number): Promise<string> => {
-  if(!(await exists("inputCache"))){
-    await Deno.mkdir("inputCache")
+  const cacheDir = "../inputCache"
+
+  if(!(await exists(cacheDir))){
+    await Deno.mkdir(cacheDir)
   }
 
-  const cachePath = `inputCache/day${day}.txt`;
+  const cachePath = `${cacheDir}/day${day}.txt`;
   if (await exists(cachePath)) {
     return (await Deno.readTextFile(cachePath));
   }

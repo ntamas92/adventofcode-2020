@@ -1,5 +1,5 @@
 
-import { fetchInput } from "./common/inputAccess.ts";
+import { fetchInput } from "./common_ts/inputAccess.ts";
 
 const input = await fetchInput(1);
 const numbers = input.split("\n").filter(x => x.length > 0).map((x) => parseInt(x));
