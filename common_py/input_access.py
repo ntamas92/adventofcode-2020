@@ -4,13 +4,16 @@ import requests
 from pathlib import Path  # Python 3.6+ only
 from dotenv import load_dotenv
 
-env_path = Path('..') / '.env'
+env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 
 access_token = os.getenv("ACCESS_TOKEN")
 
-def fetch_input(day):
-  cache_dir = "../inputCache"
+if access_token is None:
+  raise Exception("Access token not found")
+
+def fetch_input(day) -> str:
+  cache_dir = "./inputCache"
 
   if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
