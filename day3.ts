@@ -1,43 +1,35 @@
 import { fetchInput } from "./common_ts/inputAccess.ts";
 
-const input = await fetchInput(3)
+const input = await fetchInput(3);
 
-const lines = input.split("\n")
+const lines = input.split("\n");
 const lineLength = lines[0].length;
 
 const first = () => {
-  let encounteredTrees = 0;
-
-  for(let i = 0; i < lines.length; i++) {
-    if(lines[i][(i * 3) % lineLength] === "#"){
-      encounteredTrees++
-    }
-  }
-  
-  console.log(encounteredTrees)
-}
+  console.log(countTrees(1, 3));
+};
 
 const second = () => {
-  let sledOptions : Array<{strategy:(line:string, lineIndex:number) => boolean, count:number}> = [
-    {strategy: (line, lineIndex) => line[lineIndex % lineLength] === "#", count: 0},
-    {strategy: (line, lineIndex) => line[(lineIndex * 3) % lineLength] === "#", count: 0},
-    {strategy: (line, lineIndex) => line[(lineIndex * 5) % lineLength] === "#", count: 0},
-    {strategy: (line, lineIndex) => line[(lineIndex * 7) % lineLength] === "#", count: 0},
-    {strategy: (line, lineIndex) => lineIndex % 2 === 0 ? line[(lineIndex / 2) % lineLength] === "#" : false, count: 0},
-  ]
+  const slopes = [[1, 1], [1, 3], [1, 5], [1, 7], [2, 1]];
 
-  for(let i = 0; i < lines.length; i++) {
-    sledOptions.forEach(option => {
-      if(option.strategy(lines[i], i))
-        option.count++
-    })
+  console.log(slopes.map((slope) => countTrees(slope[0], slope[1])).reduce((a, b) => a * b, 1));
+};
+
+const countTrees = (verticalSlope: number, horizontalSlope: number): number => {
+  let y = 0;
+  let x = 0;
+  let treeCount = 0;
+  while (x < lines.length) {
+    if (lines[x][y % lineLength] === "#") {
+      treeCount++;
+    }
+
+    x += verticalSlope;
+    y = (y + horizontalSlope) % lineLength;
   }
 
-  console.log(sledOptions.map(x => x.count).reduce((a, b)=> a * b, 1))
-}
+  return treeCount;
+};
 
-first()
-second()
-
-
-
+first();
+second();
