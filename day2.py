@@ -11,6 +11,7 @@ input = input_access.fetch_input(2)
 
 lines = input.splitlines(keepends=False)
 
+# pylint: disable=anomalous-backslash-in-string
 pattern = re.compile("(\d+)-(\d+) (\w): (\w+)")
 
 def findvalidpasswords(validation_strategy):
