@@ -7,18 +7,18 @@ let activeCells : Set<string> = new Set();
 for (let row = 0; row < input.length; row++) {
   for (let col = 0; col < input[row].length; col++) {
     if (input[row][col] === "#") {
-      activeCells.add([row, col, 0].join(","));
+      activeCells.add([row, col, 0, 0].join(","));
     }
   }
 }
 
 console.log(activeCells);
 
-const isCellActive = (x: number, y: number, z: number, activeSet: Set<string>): boolean => {
-  return activeSet.has([x, y, z].join(","));
+const isCellActive = (x: number, y: number, z: number, w: number, activeSet: Set<string>): boolean => {
+  return activeSet.has([x, y, z, w].join(","));
 };
 
-const getNeighbouringActiveCells = (x: number, y: number, z: number, activeSet: Set<string>): number => {
+const getNeighbouringActiveCells = (x: number, y: number, z: number, w: number, activeSet: Set<string>): number => {
   let numActive = 0;
   if(x === 0 && y ===  1 && z === 0){
     console.log()
@@ -26,12 +26,14 @@ const getNeighbouringActiveCells = (x: number, y: number, z: number, activeSet: 
   for(let i = x - 1; i <= x + 1; i++){
     for(let j = y - 1; j <= y + 1; j++){
       for(let k = z - 1; k <= z + 1; k++){
-        if(i === x && j === y && k === z){
-          continue;
-        }
+        for(let l = w - 1; l <= w + 1; l++){
+          if(i === x && j === y && k === z && l === w){
+            continue;
+          }
 
-        if(isCellActive(i, j, k, activeSet)){
-          numActive++;
+          if(isCellActive(i, j, k, l, activeSet)){
+            numActive++;
+          }
         }
       }
     }
@@ -44,7 +46,7 @@ const getBoundaries = (activeSet: Set<string>) => {
   // console.log("activeCells", activeSet)
   const boundaries = []
 
-  for(let i = 0; i < 3; i++){
+  for(let i = 0; i < 4; i++){
     
     let firstValue = activeSet.values().next().value
     let lower = firstValue.split(",")[i]
@@ -77,13 +79,15 @@ while(cycles <= 5){
   for(let x = boundaries[0].lower; x <= boundaries[0].upper; x++){
     for(let y = boundaries[1].lower; y <= boundaries[1].upper; y++){
       for(let z = boundaries[2].lower; z <= boundaries[2].upper; z++){
-        const numActiveNeighbours = getNeighbouringActiveCells(x, y, z, activeCells)
-        const isActive = isCellActive(x, y, z, activeCells)
+        for(let w = boundaries[3].lower; w <= boundaries[3].upper; w++){
+          const numActiveNeighbours = getNeighbouringActiveCells(x, y, z, w, activeCells)
+          const isActive = isCellActive(x, y, z, w, activeCells)
 
-        if(isActive && (numActiveNeighbours === 2 || numActiveNeighbours === 3))
-          activeInNext.add([x, y, z].join(","))
-        else if(!isActive && numActiveNeighbours === 3)
-          activeInNext.add([x, y, z].join(","))
+          if(isActive && (numActiveNeighbours === 2 || numActiveNeighbours === 3))
+            activeInNext.add([x, y, z, w].join(","))
+          else if(!isActive && numActiveNeighbours === 3)
+            activeInNext.add([x, y, z, w].join(","))
+        }
       }
     }
   }
