@@ -1,47 +1,75 @@
 input = list(map(lambda x: int(x), "739862541"))
 
-def takeSlice(lst, start, length):
-  start = start % len(lst)
-  stop = (start + length) % len(lst)
+class LinkedListNode:
+  def __init__(self, value):
+    self.value = value
+    self.next = None
+    
 
-  if (start <= stop):
-    return (lst[start:stop], lst[:start] + lst[stop:])
-  else:
-    return (lst[start:] + lst[:stop], lst[stop: start])
+maxval = max(input)
+input = input + list(range(maxval + 1, 1000001))
+maxval = max(input)
 
-# print(takeSlice(input, 6, 3))
+head = LinkedListNode(input[0])
+prev = head
+
+for i in range(1, len(input)):
+  curr = LinkedListNode(input[i])
+  prev.next = curr
+  prev = curr
+
+prev.next = head
+
+nodeDict = dict()
+nodeDict[head.value] = head
 
 
-current_index = 0
+curr = head.next
+while curr != head:
+  nodeDict[curr.value] = curr
+  curr = curr.next
+
+current_node = head
 moves = 1
 # print(input)
 
-while moves <= 100:
-  currentcup = input[current_index]
-  (slice, remainder) = takeSlice(input, current_index + 1, 3)
-  # print(slice, remainder)
+def remove_slice(node):
+  result = node.next
+  node.next = node.next.next.next.next
+  result.next.next.next = None
+  return result
+
+def containsval(node, value):
+  while node is not None:
+    if node.value == value:
+      return True
+    node = node.next
   
-  destinationcup = currentcup - 1
-  while destinationcup in slice or destinationcup == 0:
-    destinationcup = destinationcup - 1
-    if destinationcup <= 0:
-      destinationcup = max(input)
+  return False
+
+while moves <= 10000000:
+  if moves % 100000 == 0:
+    print(moves)
+
+  
+  slice = remove_slice(current_node)
+  
+  destinationvalue = current_node.value - 1
+  while containsval(slice, destinationvalue) or destinationvalue == 0:
+    destinationvalue = destinationvalue - 1
+    if destinationvalue <= 0:
+      destinationvalue = maxval
     
-  destination_index = remainder.index(destinationcup)
-  print(destinationcup)
+  destination_node = nodeDict[destinationvalue]
 
-  originalremainderlen = len(remainder)
-  for i in range(len(slice)): 
-    remainder.insert(i + destination_index + 1, slice[i]) 
+  destinationnext = destination_node.next
+  destination_node.next = slice
+  slice.next.next.next = destinationnext
 
-  input = remainder
-
-  
-  current_index = (input.index(currentcup) + 1) % len(input)
+  current_node = current_node.next
   moves = moves + 1
-  print(input)
+  # print(input)
 
-indexofone = input.index(1)
+nodeofone = nodeDict[1]
 
-result = input[indexofone + 1:] + input[:indexofone]
-print(result)
+print("numbers after one: ", nodeofone.next.value, nodeofone.next.next.value)
